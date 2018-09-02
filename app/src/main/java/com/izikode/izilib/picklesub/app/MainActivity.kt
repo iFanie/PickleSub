@@ -15,14 +15,13 @@ import java.util.*
 class MainActivity : AppCompatActivity() {
 
     val bus = Bus(ThreadEnforcer.MAIN)
+    val subscriber = MainActivitySubscriber(this)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
         bus.register(this)
-
-        val subscriber = MainActivitySubscriber(this)
         PickleSub.register(subscriber, bus)
 
         button.setOnClickListener {
@@ -30,9 +29,12 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    data class Num(val value: Int)
+    override fun onDestroy() {
+        bus.unregister(this)
+        PickleSub.unregister(subscriber, bus)
 
-    fun random() = Num(Random().nextInt(5 - (-5) + 1) + (-5))
+        super.onDestroy()
+    }
 
     @SimplySubscribe
     fun onNumberReceived(number: Num) {
@@ -56,10 +58,11 @@ class MainActivity : AppCompatActivity() {
 
     fun isPositive(number: Num) = number.value > 0
 
+    data class Num(val value: Int)
+    fun random() = Num(Random().nextInt(5 - (-5) + 1) + (-5))
+
     companion object {
-
         const val LOG = "PickleSubApp"
-
     }
 
 }
