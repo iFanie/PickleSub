@@ -1,4 +1,4 @@
-package com.izikode.izilib.picklesubannotations.access;
+package com.izikode.izilib.picklesubannotations;
 
 public interface SubscriptionProvider {
 

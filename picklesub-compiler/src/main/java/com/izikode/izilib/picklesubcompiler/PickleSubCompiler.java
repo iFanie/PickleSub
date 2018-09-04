@@ -2,9 +2,9 @@ package com.izikode.izilib.picklesubcompiler;
 
 import com.izikode.izilib.picklesubannotations.ConditionallySubscribe;
 import com.izikode.izilib.picklesubannotations.SimplySubscribe;
-import com.izikode.izilib.picklesubannotations.utility.ConditionalFunction;
-import com.izikode.izilib.picklesubannotations.utility.SimpleFunction;
-import com.izikode.izilib.picklesubannotations.utility.SubscriberBuilder;
+import com.izikode.izilib.picklesubcompiler.utility.ConditionalFunction;
+import com.izikode.izilib.picklesubcompiler.utility.SimpleFunction;
+import com.izikode.izilib.picklesubcompiler.utility.SubscriberBuilder;
 
 import java.io.IOException;
 import java.io.Writer;
@@ -21,10 +21,10 @@ import javax.annotation.processing.ProcessingEnvironment;
 import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Element;
-import javax.lang.model.element.PackageElement;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Elements;
+import javax.lang.model.util.Types;
 import javax.tools.Diagnostic;
 import javax.tools.JavaFileObject;
 
@@ -79,6 +79,7 @@ public class PickleSubCompiler extends AbstractProcessor {
     }
 
     private Elements elementUtils;
+    private Types typeUtils;
 
     @Override
     public synchronized void init(ProcessingEnvironment processingEnv) {
@@ -87,6 +88,7 @@ public class PickleSubCompiler extends AbstractProcessor {
         filer = processingEnv.getFiler();
         messager = processingEnv.getMessager();
         elementUtils = processingEnv.getElementUtils();
+        typeUtils = processingEnv.getTypeUtils();
     }
 
     private final List<SubscriberBuilder> subscriberBuilders = new ArrayList<>();
@@ -143,25 +145,37 @@ public class PickleSubCompiler extends AbstractProcessor {
     }
 
     private SubscriberBuilder getSubscriberBuilder(Element buildElement) {
-        Element sourceClass = buildElement.getEnclosingElement();
-        PackageElement sourcePackage = elementUtils.getPackageOf(sourceClass);
-
-        return getSubscriberBuilder(
-                sourcePackage.getQualifiedName().toString(),
-                sourceClass.getSimpleName().toString()
-        );
+        return getSubscriberBuilder((TypeElement) buildElement.getEnclosingElement());
     }
 
-    private SubscriberBuilder getSubscriberBuilder(String buildPackage, String buildSource) {
-        SubscriberBuilder newSubscriberBuilder = new SubscriberBuilder(buildPackage, buildSource);
+    private SubscriberBuilder getSubscriberBuilder(TypeElement sourceClass) {
+        SubscriberBuilder newSubscriberBuilder = new SubscriberBuilder(elementUtils.getPackageOf(sourceClass), sourceClass);
 
         for (SubscriberBuilder subscriberBuilder : subscriberBuilders) {
-            if (subscriberBuilder.equals(newSubscriberBuilder)) {
+            if (subscriberBuilder.equals(newSubscriberBuilder) || firstIsSuperclassOfSecond(subscriberBuilder, newSubscriberBuilder)) {
+
                 return subscriberBuilder;
+
+            } else if (firstIsSubclassOfSecond(subscriberBuilder, newSubscriberBuilder)) {
+
+                subscriberBuilder.reAssignFrom(newSubscriberBuilder);
+                return subscriberBuilder;
+
             }
         }
 
         return newSubscriberBuilder;
+    }
+
+    private boolean firstIsSuperclassOfSecond(SubscriberBuilder first, SubscriberBuilder second) {
+        TypeMirror firstType = first.sourceElement().getSuperclass();
+        TypeMirror secondType = second.sourceElement().asType();
+
+        return typeUtils.isSameType(firstType, secondType);
+    }
+
+    private boolean firstIsSubclassOfSecond(SubscriberBuilder first, SubscriberBuilder second) {
+        return firstIsSuperclassOfSecond(second, first);
     }
 
 }

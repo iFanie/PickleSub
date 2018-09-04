@@ -1,6 +1,6 @@
 package com.izikode.izilib.picklesub;
 
-import com.izikode.izilib.picklesubannotations.access.SubscriptionProvider;
+import com.izikode.izilib.picklesubannotations.SubscriptionProvider;
 import com.squareup.otto.Bus;
 
 public class PickleSub {

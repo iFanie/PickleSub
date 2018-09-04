@@ -1,18 +1,16 @@
 package com.izikode.izilib.picklesub.app
 
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import com.izikode.izilib.picklesub.PickleSub
 import com.izikode.izilib.picklesubannotations.ConditionallySubscribe
 import com.izikode.izilib.picklesubannotations.SimplySubscribe
-import com.squareup.otto.Subscribe
 import com.squareup.otto.Bus
+import com.squareup.otto.Subscribe
 import com.squareup.otto.ThreadEnforcer
 import kotlinx.android.synthetic.main.activity_main.*
-import java.util.*
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : BaseActivity() {
 
     val bus = Bus(ThreadEnforcer.MAIN)
     val subscriber = MainActivitySubscriber(this)
@@ -25,7 +23,7 @@ class MainActivity : AppCompatActivity() {
         PickleSub.register(subscriber, bus)
 
         button.setOnClickListener {
-            bus.post(random())
+            bus.post(Num.random(-5, 5))
         }
     }
 
@@ -51,18 +49,8 @@ class MainActivity : AppCompatActivity() {
         Log.d(LOG, "onPositiveReceived: ${positiveNumber.value}")
     }
 
-    @Subscribe
-    fun onPositiveReceivedOtto(positiveNumber: Num) {
-        Log.d(LOG, "onPositiveReceivedOtto: ${positiveNumber.value}")
-    }
-
-    fun isPositive(number: Num) = number.value > 0
-
-    data class Num(val value: Int)
-    fun random() = Num(Random().nextInt(5 - (-5) + 1) + (-5))
-
     companion object {
-        const val LOG = "PickleSubApp"
+        const val LOG = "PickleSubApp:MAIN"
     }
 
 }

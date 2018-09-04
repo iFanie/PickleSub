@@ -1,4 +1,4 @@
-package com.izikode.izilib.picklesubannotations.utility;
+package com.izikode.izilib.picklesubcompiler.utility;
 
 import java.util.Locale;
 

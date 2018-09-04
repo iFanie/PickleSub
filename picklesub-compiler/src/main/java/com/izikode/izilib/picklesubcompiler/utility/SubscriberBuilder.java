@@ -1,31 +1,57 @@
-package com.izikode.izilib.picklesubannotations.utility;
+package com.izikode.izilib.picklesubcompiler.utility;
+
+import com.izikode.izilib.picklesubannotations.SubscriptionProvider;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import javax.lang.model.element.PackageElement;
+import javax.lang.model.element.TypeElement;
+
 public class SubscriberBuilder {
 
-    private final static String PROVIDER_INTERFACE = "com.izikode.izilib.picklesubannotations.access.SubscriptionProvider";
+    private final static String PROVIDER_INTERFACE = SubscriptionProvider.class.getName();
 
     private final static String TB = "\t";
     private final static String NL = "\n";
 
-    private final String buildPackage;
-    private final String buildSource;
-    private final String buildSubscriber;
+    private final static String SOURCE_INSTANCE = "sourceInstance";
+    private final static String SUBSCRIBERS = "subscribers";
 
-    private final String SOURCE_INSTANCE = "sourceInstance";
-    private final String SUBSCRIBERS = "subscribers";
+    private PackageElement sourcePackage;
+    private TypeElement sourceClass;
 
-    public SubscriberBuilder(String buildPackage, String buildSource) {
+    private String buildPackage;
+    private String buildSource;
+    private String buildSubscriber;
+
+    public SubscriberBuilder(PackageElement sourcePackage, TypeElement sourceClass) {
+        this.sourcePackage = sourcePackage;
+        this.sourceClass = sourceClass;
+
+        assignFrom(sourcePackage.getQualifiedName().toString(), sourceClass.getSimpleName().toString());
+    }
+
+    public void assignFrom(String buildPackage, String buildSource) {
         this.buildPackage = buildPackage;
         this.buildSource = buildSource;
         this.buildSubscriber = buildSource + "Subscriber";
     }
 
+    public void reAssignFrom(SubscriberBuilder subscriber) {
+        sourcePackage = subscriber.sourcePackage;
+        sourceClass = subscriber.sourceClass;
+
+        assignFrom(subscriber.buildPackage, subscriber.buildSource);
+    }
+
     public String sourceClass() {
         return buildPackage + "." + buildSource;
+    }
+
+    public TypeElement sourceElement() {
+        return sourceClass;
     }
 
     public String subscriberClass() {

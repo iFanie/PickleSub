@@ -6,7 +6,7 @@ Conditional Event Bus subscription
 - Build the project and use the generated subscriber class. For ```MainActivity``` the generated subscriber class would be ```MainActivitySubscriber```.
 - Register and unregister using the ```PickleSub``` static helper functions.
 ```kotlin
-class MainActivity : AppCompatActivity() {
+class MainActivity : BaseActivity() {
 
     val bus = Bus(ThreadEnforcer.MAIN)
     val subscriber = MainActivitySubscriber(this)
@@ -19,7 +19,7 @@ class MainActivity : AppCompatActivity() {
         PickleSub.register(subscriber, bus)
 
         button.setOnClickListener {
-            bus.post(random())
+            bus.post(Num.random(-5, 5))
         }
     }
 
@@ -45,18 +45,33 @@ class MainActivity : AppCompatActivity() {
         Log.d(LOG, "onPositiveReceived: ${positiveNumber.value}")
     }
 
-    @Subscribe
-    fun onPositiveReceivedOtto(positiveNumber: Num) {
-        Log.d(LOG, "onPositiveReceivedOtto: ${positiveNumber.value}")
+    companion object {
+        const val LOG = "PickleSubApp:MAIN"
+    }
+
+}
+```
+### Works with inheritance
+- The Subscriber will be generated only for the deriving class.
+```kotlin
+abstract class BaseActivity : AppCompatActivity() {
+
+    @ConditionallySubscribe(mustSatisfy = "isPositive")
+    fun onBasePositiveReceived(positiveNumber: Num) {
+        Log.d(LOG, "onBasePositiveReceived: ${positiveNumber.value}")
+    }
+
+    @ConditionallySubscribe(mustSatisfy = "isNegative")
+    fun onNegativeReceived(negativeNumber: Num) {
+        Log.d(LOG, "onNegativeReceived: ${negativeNumber.value}")
     }
 
     fun isPositive(number: Num) = number.value > 0
 
-    data class Num(val value: Int)
-    fun random() = Num(Random().nextInt(5 - (-5) + 1) + (-5))
+    fun isNegative(number: Num) = number.value < 0
 
     companion object {
-        const val LOG = "PickleSubApp"
+        const val LOG = "PickleSubApp:BASE"
     }
 
 }
