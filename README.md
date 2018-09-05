@@ -1,5 +1,15 @@
 # PickleSub
 Conditional Event Bus subscription
+## Install
+```gradle
+implementation 'com.izikode.izilib:picklesub:0.3'
+annotationProcessor 'com.izikode.izilib:picklesub-complier:0.3'
+```
+##### or with kotlin
+```gradle
+implementation 'com.izikode.izilib:picklesub:0.3'
+kapt 'com.izikode.izilib:picklesub-complier:0.3'
+```
 ## Sample Usage
 - Annotate with ```@SimplySubscribe``` to retreive all relevant events.
 - Annotate with ```@ConditionallySubscribe``` and provide a function which must be satisfied by the event data in order to be retrieved.
@@ -75,4 +85,20 @@ abstract class BaseActivity : AppCompatActivity() {
     }
 
 }
+```
+## Licence
+```licence
+Copyright 2018 Fanie Veizis
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
 ```
