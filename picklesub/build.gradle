@@ -58,9 +58,6 @@ android {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation "com.android.support:appcompat-v7:${ Version.Dependency.SUPPORT }"
-
-    api "com.squareup:otto:${ Version.Dependency.OTTO }"
     api project(':picklesub-annotations')
 }
 

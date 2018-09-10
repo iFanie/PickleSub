@@ -13,18 +13,18 @@ See the License for the specific language governing permissions and
 limitations under the License. */
 package com.izikode.izilib.picklesubcompiler.utility;
 
-import com.izikode.izilib.picklesubannotations.SubscriptionProvider;
-
+import com.izikode.izilib.picklesubannotations.component.AbstractSubscriber;
+import com.izikode.izilib.picklesubannotations.component.AbstractSubscriptionProvider;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-
 import javax.lang.model.element.PackageElement;
 import javax.lang.model.element.TypeElement;
 
 public class SubscriberBuilder {
 
-    private final static String PROVIDER_INTERFACE = SubscriptionProvider.class.getName();
+    private final static String PROVIDER_INTERFACE = AbstractSubscriptionProvider.class.getName();
+    private final static String SUBSCRIBER_INTERFACE = AbstractSubscriber.class.getName();
 
     private final static String TB = "\t";
     private final static String NL = "\n";
@@ -86,7 +86,7 @@ public class SubscriberBuilder {
     public String sourceCode() {
         return  "package " + buildPackage + ";" + NL +
                 NL +
-                "public class " + buildSubscriber + " implements " + PROVIDER_INTERFACE + " {" + NL +
+                "public class " + buildSubscriber + " extends " + PROVIDER_INTERFACE + " {" + NL +
                 NL +
                 TB + "private final " + sourceClass() + " " + SOURCE_INSTANCE + ";" + NL +
                 NL +
@@ -103,10 +103,10 @@ public class SubscriberBuilder {
     }
 
     public String getProviderImplementationSourceCode() {
-        return  TB + "private Object[] " + SUBSCRIBERS + " = null;" + NL +
+        return  TB + "private " + SUBSCRIBER_INTERFACE + "[] " + SUBSCRIBERS + " = null;" + NL +
                 NL +
                 TB + "@Override" + NL +
-                TB + "public Object[] getSubscribers() {" + NL +
+                TB + "public " + SUBSCRIBER_INTERFACE + "[] getSubscribers() {" + NL +
                 TB + TB + "if (" + SUBSCRIBERS + " == null) {" + NL +
                 TB + TB + TB + SUBSCRIBERS + " = initializeSubscribers();" + NL +
                 TB + TB + "}" + NL +
@@ -116,8 +116,8 @@ public class SubscriberBuilder {
     }
 
     private String getInitializerSourceCode() {
-        StringBuilder providerBuilder = new StringBuilder(TB).append("private Object[] initializeSubscribers() {").append(NL)
-                .append(TB).append(TB).append("return new Object[] { ");
+        StringBuilder providerBuilder = new StringBuilder(TB).append("private ").append(SUBSCRIBER_INTERFACE).append("[] initializeSubscribers() {").append(NL)
+                .append(TB).append(TB).append("return new ").append(SUBSCRIBER_INTERFACE).append("[] { ");
 
         int index = 0;
 

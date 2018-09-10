@@ -20,16 +20,19 @@ class MainActivity : BaseActivity() {
         setContentView(R.layout.activity_main)
 
         bus.register(this)
-        PickleSub.register(subscriber, bus)
 
-        button.setOnClickListener {
+        registerSingularly.setOnClickListener {
+            PickleSub.registerSingularly(subscriber, bus)
+        }
+
+        fireEvent.setOnClickListener {
             bus.post(Num.random(-5, 5))
         }
     }
 
     override fun onDestroy() {
         bus.unregister(this)
-        PickleSub.unregister(subscriber, bus)
+        //PickleSub.unregister(subscriber, bus)
 
         super.onDestroy()
     }

@@ -2,19 +2,20 @@
 Conditional Event Bus subscription
 ## Install
 ```gradle
-implementation 'com.izikode.izilib:picklesub:0.3'
-annotationProcessor 'com.izikode.izilib:picklesub-complier:0.3'
+implementation 'com.izikode.izilib:picklesub:0.4'
+annotationProcessor 'com.izikode.izilib:picklesub-compiler:0.4'
 ```
 ##### or with kotlin
 ```gradle
-implementation 'com.izikode.izilib:picklesub:0.3'
-kapt 'com.izikode.izilib:picklesub-complier:0.3'
+implementation 'com.izikode.izilib:picklesub:0.4'
+kapt 'com.izikode.izilib:picklesub-compiler:0.4'
 ```
 ## Sample Usage
 - Annotate with ```@SimplySubscribe``` to retreive all relevant events.
 - Annotate with ```@ConditionallySubscribe``` and provide a function which must be satisfied by the event data in order to be retrieved.
 - Build the project and use the generated subscriber class. For ```MainActivity``` the generated subscriber class would be ```MainActivitySubscriber```.
 - Register and unregister using the ```PickleSub``` static helper functions.
+- Use ``PickleSub.registerSingularly`` to automatically unregister all subscriptions when the first event is consumed.
 ```kotlin
 class MainActivity : BaseActivity() {
 

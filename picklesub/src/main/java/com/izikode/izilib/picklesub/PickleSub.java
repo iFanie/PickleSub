@@ -13,20 +13,49 @@ See the License for the specific language governing permissions and
 limitations under the License. */
 package com.izikode.izilib.picklesub;
 
-import com.izikode.izilib.picklesubannotations.SubscriptionProvider;
+import com.izikode.izilib.picklesubannotations.component.AbstractSubscriptionProvider;
 import com.squareup.otto.Bus;
 
 public class PickleSub {
 
-    public static void register(SubscriptionProvider subscriptionProvider, Bus bus) {
+    /**
+     * Registers the provider's subscriptions to the event bus.
+     * @param subscriptionProvider The subscription provider.
+     * @param bus The Otto event bus.
+     */
+    public static void register(AbstractSubscriptionProvider subscriptionProvider, Bus bus) {
+        subscriptionProvider.reset();
+
         for (Object subscriber : subscriptionProvider.getSubscribers()) {
             bus.register(subscriber);
         }
     }
 
-    public static void unregister(SubscriptionProvider subscriptionProvider, Bus bus) {
+    /**
+     * Unregisters the provider's subscriptions from the event bus.
+     * @param subscriptionProvider The subscription provider.
+     * @param bus The Otto event bus.
+     */
+    public static void unregister(AbstractSubscriptionProvider subscriptionProvider, Bus bus) {
         for (Object subscriber : subscriptionProvider.getSubscribers()) {
             bus.unregister(subscriber);
+        }
+
+        subscriptionProvider.reset();
+    }
+
+    /**
+     * Registers the provider's subscriptions to the event bus for a singular event.
+     * @param subscriptionProvider The subscription provider.
+     * @param bus The Otto event bus.
+     */
+    public static void registerSingularly(AbstractSubscriptionProvider subscriptionProvider, Bus bus) {
+        subscriptionProvider.reset()
+                .bus(bus)
+                .withSingleSubscription();
+
+        for (Object subscriber : subscriptionProvider.getSubscribers()) {
+            bus.register(subscriber);
         }
     }
 

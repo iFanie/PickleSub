@@ -18,7 +18,6 @@ import com.izikode.izilib.picklesubannotations.SimplySubscribe;
 import com.izikode.izilib.picklesubcompiler.utility.ConditionalFunction;
 import com.izikode.izilib.picklesubcompiler.utility.SimpleFunction;
 import com.izikode.izilib.picklesubcompiler.utility.SubscriberBuilder;
-
 import java.io.IOException;
 import java.io.Writer;
 import java.util.ArrayList;
@@ -26,7 +25,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
-
 import javax.annotation.processing.AbstractProcessor;
 import javax.annotation.processing.Filer;
 import javax.annotation.processing.Messager;

@@ -13,10 +13,12 @@ See the License for the specific language governing permissions and
 limitations under the License. */
 package com.izikode.izilib.picklesubcompiler.utility;
 
+import com.izikode.izilib.picklesubannotations.component.AbstractSubscriber;
 import java.util.Locale;
 
 public class SimpleFunction {
 
+    private final static String SUBSCRIBER_INTERFACE = AbstractSubscriber.class.getName();
     private final static String OTTO_SUBSCRIBE = "@com.squareup.otto.Subscribe";
 
     private final static String TB = "\t";
@@ -35,18 +37,31 @@ public class SimpleFunction {
     }
 
     public String getBuilderSourceCode(int index, String sourceSubscriberClass, String sourceSubscriberInstance) {
-        return  TB + "private Object " + getBuilderName(index) + " {" + NL +
-                TB + TB + "return new Object() {" + NL +
+        return  TB + "private " + subscriberDeclaration() + " " + getBuilderName(index) + " {" + NL +
+                TB + TB + "return new " + subscriberInitializer() + " {" + NL +
                 NL +
                 TB + TB + TB + "private final " + sourceSubscriberClass + " sourceSubscriber = " + sourceSubscriberInstance + ";" + NL +
                 NL +
+                TB + TB + TB + "@Override" + NL +
                 TB + TB + TB + OTTO_SUBSCRIBE + NL +
                 TB + TB + TB + "public void subscribe(" + functionSubscription + " subscription) {" + NL +
                 TB + TB + TB + TB + "sourceSubscriber." + functionName + "(subscription);" + NL +
+                NL +
+                TB + TB + TB + TB + "if (singleSubscription) {" + NL +
+                TB + TB + TB + TB + TB + "unregister(this, subscription);" + NL +
+                TB + TB + TB + TB + "}" + NL +
                 TB + TB + TB + "}" + NL +
                 NL +
                 TB + TB + "};" + NL +
                 TB + "}";
+    }
+
+    private String subscriberDeclaration() {
+        return SUBSCRIBER_INTERFACE + "<" + functionSubscription + ">";
+    }
+
+    private String subscriberInitializer() {
+        return subscriberDeclaration() + "(" + functionSubscription + ".class)";
     }
 
     @Override

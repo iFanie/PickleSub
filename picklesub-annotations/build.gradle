@@ -43,6 +43,7 @@ targetCompatibility = Version.Core.JAVA
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
+    api "com.squareup:otto:${ Version.Dependency.OTTO }"
 }
 
 apply from: 'https://raw.githubusercontent.com/nuuneoi/JCenter/master/installv1.gradle'
